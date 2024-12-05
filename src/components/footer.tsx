@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Github, Twitter, Linkedin, Instagram } from "lucide-react";
 import Logo from "./logo";
 
 export function Footer() {
@@ -18,6 +18,7 @@ export function Footer() {
             <p className="text-sm mb-2">
               Create beautiful and functional tables with ease.
             </p>
+            <p className="text-sm mb-2 text-muted-foreground"> <Link href={'https://prabinbhatt.com.np'} className="font-mono" target="_blank">prabinbhatt.com.np</Link></p>
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} All rights reserved.
             </p>
@@ -27,7 +28,7 @@ export function Footer() {
             <div className="flex space-x-2">
               <Button variant="ghost" size="icon" asChild>
                 <Link
-                  href="https://github.com"
+                  href="https://github.com/bprabin811"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -37,7 +38,7 @@ export function Footer() {
               </Button>
               <Button variant="ghost" size="icon" asChild>
                 <Link
-                  href="https://twitter.com"
+                  href="https://x.com/@ProWin32289620"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -47,11 +48,11 @@ export function Footer() {
               </Button>
               <Button variant="ghost" size="icon" asChild>
                 <Link
-                  href="https://linkedin.com"
+                  href="https://www.instagram.com/pro_win811/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="h-5 w-5" />
+                  <Instagram className="h-5 w-5" />
                   <span className="sr-only">LinkedIn</span>
                 </Link>
               </Button>

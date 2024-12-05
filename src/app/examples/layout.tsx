@@ -21,14 +21,14 @@ export default function ExamplesLayout({ children }: { children: ReactNode }) {
       href: "/examples",
       code: <ExampleOneCodeBlocks />,
       description:
-        "This is an example page to demonstrate the layout of the examples page.",
+        "This is an example table to demostrate CRUD operations with a form.",
     },
     {
       label: "Example 2",
       href: "/examples/example-2",
       code: <ExampleTwoCodeBlocks />,
       description:
-        "This is an example page to demonstrate the layout of the examples page.",
+        "This is an example table to demostrate simple table with search, sort and pagination only.",
     },
   ];
 

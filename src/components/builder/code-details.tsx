@@ -197,10 +197,10 @@ export default function MyForm() {
       filename: "form.tsx",
     },
     {
-      title: "Update the import paths to match your project setup.",
-      description:
-        "Make sure the import paths match your project's directory structure and naming conventions.",
-      code: `
+      "title": "Align Import Paths with Project Structure and Update `form.tsx`",
+      "description":
+        "Ensure that the import paths align with your project's directory structure and naming conventions. Additionally, verify that all required packages are installed. Once these steps are completed, proceed to update the `form.tsx` file as outlined below.",
+      "code": `
     // Update import paths
     import { MyFormData } from "@types/table";
     ...
@@ -262,8 +262,8 @@ export default function MyForm() {
     },
     {
       //add type component for form fields
-      title: "create type component.",
-      description: "Create a type component for form fields.",
+      "title": "Define a TypeScript Interface for Form Data",
+      "description": "Create a TypeScript interface to define the structure of form data, specifying field names and their respective data types for better type safety and maintainability.",
       code: `export interface MyFormData {
   id: string;
   name_4603829743: string;
@@ -276,25 +276,24 @@ export default function MyForm() {
     },
     // create column component
     {
-      title: "Create a column component.",
-      description: "Create a column component for displaying data.",
+      "title": "Create a Column Component with React Table",
+      "description": "Implement a column component using `@tanstack/react-table` to display and manage structured data. Leverage the `MyFormData` type to define column configurations, ensuring clarity and type safety.",
       code: `${columnCode}`,
       language: "typescript",
       filename: "column.tsx",
     },
     // create data-table component
     {
-      title: "Create a data-table component.",
-      description: "Create a data-table component for displaying data.",
+      "title": "Build a Data Table Component",
+      "description": "Develop a data-table component to display structured data effectively. Integrate column definitions and data handling to create an interactive and user-friendly table.",
       code: `${tableCode}`,
       language: "typescript",
       filename: "data-table.tsx",
     },
     //create page.tsx
     {
-      title: "Create a page component.",
-      description:
-        "Create a page component for rendering the form and table components.",
+      "title": "Develop a Page Component",
+      "description": "Implement a page component that combines and renders the form and data-table components to create a cohesive user interface.",
       code: `${pageCode}`,
       laguage: "typescript",
       filename: "page.tsx",

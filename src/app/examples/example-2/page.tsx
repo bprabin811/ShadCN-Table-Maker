@@ -18,18 +18,16 @@ const initialData: MyFormData[] = [
     id: "2",
     name_4603829743: "John Doe",
     name_0878515932: 35,
-    name_0706064476:"male",
+    name_0706064476: "male",
     name_6646786819: "jon@test.com",
   }
 ];
 
 export default function TableBuilder() {
   const [data, setData] = useState<MyFormData[]>(initialData);
-const columns = createColumns();
-return (
-
-    <div className="container mx-auto py-10">
-      
+  const columns = createColumns();
+  return (
+    <div className="py-4">
       <DataTable
         columns={columns}
         data={data}

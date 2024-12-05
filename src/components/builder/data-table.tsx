@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4 py-4 rounded-lg">
       <h4>Table Preview</h4>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         {config.search && (
           <Input
             placeholder="Filter usernames..."

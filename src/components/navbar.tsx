@@ -37,7 +37,7 @@ export function Navbar() {
               <Button variant={"link"}>Examples</Button>
             </Link>
             <Button variant="ghost" size="icon" asChild>
-              <Link href="https://github.com/yourusername/shadcn-table-maker">
+              <Link href="https://github.com/bprabin811/ShadCN-Table-Maker" target="_blank">
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </Link>
