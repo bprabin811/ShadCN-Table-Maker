@@ -43,7 +43,7 @@ export default function Playground() {
 
   return (
     <div className="container mx-auto py-8">
-      <section className="h-[80vh] flex items-start justify-end flex-col">
+      <section className="h-[80vh] flex items-start justify-center md:justify-end flex-col">
         <h1 className="text-3xl md:text-5xl lg:text-7xl mb-8 font-bold">Build Dynamic <span className="text-rose-600">Tables</span> in Minutes!</h1>
         <div className="flex flex-col gap-4">
           <p className="text-muted-foreground text-sm">
