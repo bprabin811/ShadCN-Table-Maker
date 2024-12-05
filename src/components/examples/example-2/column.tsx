@@ -13,8 +13,8 @@ export interface MyFormData {
 export const createColumns = (): ColumnDef<MyFormData>[] => {
   const columns: ColumnDef<MyFormData>[] = [
     {
-    accessorKey: "name_4603829743",
-    header: "Name",
+      accessorKey: "name_4603829743",
+      header: "Name",
     },
     {
       accessorKey: "name_0878515932",
