@@ -20,7 +20,7 @@ export function Navbar() {
               <Link href="/" legacyBehavior passHref>
                 <NavigationMenuLink className="flex items-center space-x-2">
                   <Logo />{" "}
-                  <span className="uppercase font-semibold">
+                  <span className="uppercase font-semibold hidden md:block">
                     Shadcn Table Maker
                   </span>
                 </NavigationMenuLink>

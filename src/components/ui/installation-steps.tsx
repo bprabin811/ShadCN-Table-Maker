@@ -1,4 +1,5 @@
 import { CodeBlock } from "../code-block"
+import { Separator } from "./separator"
 
 interface Step {
   title: string
@@ -15,9 +16,10 @@ interface InstallationStepsProps {
 export function InstallationSteps({ steps }: InstallationStepsProps) {
   return (
     <div className="space-y-8">
+      <Separator className="mb-4"/>
       {steps.map((step, index) => (
         <div key={index} className="relative">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 flex-col md:flex-row">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">
               {index + 1}
             </div>

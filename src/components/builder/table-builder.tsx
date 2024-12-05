@@ -96,7 +96,7 @@ export function TableBuilder({ config }: TableBuilderProps) {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="py-4">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>

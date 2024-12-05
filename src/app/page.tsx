@@ -11,6 +11,7 @@ import {
   generateDataTableCode,
   generatePageCode,
 } from "@/lib/code-generator";
+import { Separator } from "@/components/ui/separator";
 
 export default function Playground() {
   const [config, setConfig] = useState({
@@ -48,9 +49,9 @@ export default function Playground() {
         </p>
       </div>
       <section>
-        <div className="w-full py-4 flex gap-4">
-          <div className="w-36">
-            <div className="flex flex-col gap-4">
+        <div className="w-full py-4 flex gap-4 flex-col md:flex-row">
+          <div className="w-full md:w-36">
+            <div className="flex flex-row flex-wrap md:flex-col gap-4">
               {Object.entries(config).map(([key, value]) => (
                 <div
                   key={key}
@@ -71,10 +72,11 @@ export default function Playground() {
               ))}
             </div>
           </div>
-          <div className="flex-1">
+          <div className="w-full md:flex-1">
             <TableBuilder config={config} />
           </div>
         </div>
+        <Separator className="mb-4"/>
         <FileTree />
         <CodeDetails
           tableCode={tableCode}

@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <div className="space-y-4 p-4 rounded-lg">
+    <div className="space-y-4 py-4 rounded-lg">
       <h4>Table Preview</h4>
       <div className="flex items-center justify-between">
         {config.search && (
