@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/footer";
+import { constructMetadata } from "@/lib/metadata";
 
 
 const poppins = Poppins({
@@ -12,10 +13,8 @@ const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-export const metadata: Metadata = {
-  title: "ShadCN-Table-Maker",
-  description: "A simple table maker for ShadCN",
-};
+export const metadata = constructMetadata();
+
 
 export default function RootLayout({
   children,
@@ -33,10 +32,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-        <Navbar/>
-        {children}
-        <Footer/>
-        <Toaster />
+          <Navbar />
+          {children}
+          <Footer />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
