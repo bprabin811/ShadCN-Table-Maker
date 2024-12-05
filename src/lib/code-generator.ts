@@ -1,27 +1,27 @@
 import { TableConfig } from "@/components/builder/column";
 
 export const generatePageCode = (config: TableConfig): string => {
-    const imports = [
-      `"use client";`,
-      ``,
-      `import { useState${config.sorting ? ', useMemo' : ''} } from "react";`,
-      `import { createColumns } from "@/components/builder/column";`,
-      `import { DataTable } from "@/components/builder/data-table";`,
-      `import { MyFormData } from "./types";`,
-    ];
+  const imports = [
+    `"use client";`,
+    ``,
+    `import { useState${config.sorting ? ", useMemo" : ""} } from "react";`,
+    `import { createColumns } from "./column";`,
+    `import { DataTable } from "./data-table";`,
+    `import { MyFormData } from "./types";`,
+  ];
 
-    if (config.create || config.edit) {
-      imports.push(`import { UserForm } from "@/components/builder/form";`);
-      imports.push(`import {
+  if (config.create || config.edit) {
+    imports.push(`import { UserForm } from "./form";`);
+    imports.push(`import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";`);
-    }
+  }
 
-    const initialData = `
+  const initialData = `
 const initialData: MyFormData[] = [
    {
     id: "1",
@@ -32,71 +32,75 @@ const initialData: MyFormData[] = [
   },
 ];`;
 
-    const componentStart = `
-export function TableBuilder() {
+  const componentStart = `
+export default function TablePage() {
   const [data, setData] = useState<MyFormData[]>(initialData);`;
 
-    const stateVariables = [];
-    if (config.create || config.edit) {
-      stateVariables.push(`  const [editingUser, setEditingUser] = useState<MyFormData | null>(null);`);
-      stateVariables.push(`  const [isDialogOpen, setIsDialogOpen] = useState(false);`);
-    }
+  const stateVariables = [];
+  if (config.create || config.edit) {
+    stateVariables.push(
+      `  const [editingUser, setEditingUser] = useState<MyFormData | null>(null);`
+    );
+    stateVariables.push(
+      `  const [isDialogOpen, setIsDialogOpen] = useState(false);`
+    );
+  }
 
-    const columnsDeclaration =  `const columns = createColumns();`;
+  const columnsDeclaration = `const columns = createColumns();`;
 
-    const functions = [];
-    if (config.create) {
-      functions.push(`
+  const functions = [];
+  if (config.create) {
+    functions.push(`
   const handleCreate = (newRecord: Omit<MyFormData, "id">) => {
-    const record = { ...newUser, id: String(data.length + 1) };
+    const record = { ...newRecord, id: String(data.length + 1) };
     setData([...data, record]);
     setIsDialogOpen(false);
   };`);
-    }
+  }
 
-    if (config.edit) {
-      functions.push(`
+  if (config.edit) {
+    functions.push(`
   const handleUpdate = (updatedUser: MyFormData) => {
     setData(data.map((record) => (record.id === updatedUser.id ? updatedUser : record)));
     setIsDialogOpen(false);
     setEditingUser(null);
   };`);
-    }
+  }
 
-    if (config.delete) {
-      functions.push(`
+  if (config.delete) {
+    functions.push(`
   const handleDelete = (id: string) => {
     setData(data.filter((record) => record.id !== id));
   };`);
-    }
+  }
 
-    if (config.bulkDelete) {
-      functions.push(`
-  const handleBulkDelete = (users: MyFormData[]) => {
+  if (config.multiDelete) {
+    functions.push(`
+  const handlemultiDelete = (users: MyFormData[]) => {
     const userIds = new Set(users.map((record) => record.id));
     setData(data.filter((record) => !userIds.has(record.id)));
   };`);
-    }
+  }
 
-    if (config.edit) {
-      functions.push(`
+  if (config.edit) {
+    functions.push(`
   const handleEdit = (record: MyFormData) => {
     setEditingUser(record);
     setIsDialogOpen(true);
   };`);
-    }
+  }
 
-    if (config.create) {
-      functions.push(`
+  if (config.create) {
+    functions.push(`
   const openCreateDialog = () => {
     setEditingUser(null);
     setIsDialogOpen(true);
   };`);
-    }
+  }
 
-    const dialogJSX = config.create || config.edit
-      ? `
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+  const dialogJSX =
+    config.create && config.edit
+      ? `<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingUser ? "Edit" : "Create New"}</DialogTitle>
@@ -112,73 +116,105 @@ export function TableBuilder() {
           </div>
         </DialogContent>
       </Dialog>`
-      : '';
+      : config.create
+      ? `<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{"Create New"}</DialogTitle>
+            <DialogDescription>
+              Please fill out the form below to create a new data.
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            <UserForm
+              onSubmit={handleCreate}
+              initialData={editingUser}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>`
+      : config.edit
+      ? `<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{"Edit"}</DialogTitle>
+            <DialogDescription>
+              Please fill out the form below to update the data.
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            <UserForm
+              onSubmit={handleUpdate}
+              initialData={editingUser}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>`
+      : "";
 
-    const dataTableProps = [
-      'columns={columns}',
-      'data={data}',
-    ];
+  const dataTableProps = ["columns={columns}", "data={data}"];
 
-    if (config.create) dataTableProps.push('onAdd={openCreateDialog}');
-    if (config.edit) dataTableProps.push('onEdit={handleEdit}');
-    if (config.delete) dataTableProps.push('onDelete={handleDelete}');
-    if (config.bulkDelete) dataTableProps.push('onBulkDelete={handleBulkDelete}');
+  if (config.create) dataTableProps.push("onAdd={openCreateDialog}");
+  if (config.edit) dataTableProps.push("onEdit={handleEdit}");
+  if (config.delete) dataTableProps.push("onDelete={handleDelete}");
+  if (config.multiDelete)
+    dataTableProps.push("onmultiDelete={handlemultiDelete}");
 
-    const componentEnd = `
+  const componentEnd = `
     <div className="container mx-auto py-10">
       ${dialogJSX}
       <DataTable
-        ${dataTableProps.join('\n        ')}
+        ${dataTableProps.join("\n        ")}
       />
     </div>
   );
 }`;
 
-    return [
-      ...imports,
-      initialData,
-      componentStart,
-      ...stateVariables,
-      columnsDeclaration,
-      ...functions,
-      'return (',
-      componentEnd,
-    ].join('\n');
-  };
+  return [
+    ...imports,
+    initialData,
+    componentStart,
+    ...stateVariables,
+    columnsDeclaration,
+    ...functions,
+    "return (",
+    componentEnd,
+  ].join("\n");
+};
 
+export const generateColumnCode = (config: TableConfig): string => {
+  const imports = [
+    `"use client";`,
+    ``,
+    `import { ColumnDef } from "@tanstack/react-table";`,
+  ];
 
-  export const generateColumnCode = (config: TableConfig): string => {
-    const imports = [
-      `"use client";`,
-      ``,
-      `import { ColumnDef } from "@tanstack/react-table";`,
-    ];
-  
-    if (config.edit || config.delete) {
-      imports.push(
-        `import { Button } from "@/components/ui/button";`,
-        `import { MoreHorizontal } from 'lucide-react';`,
-        `import {`,
-        `  DropdownMenu,`,
-        `  DropdownMenuContent,`,
-        `  DropdownMenuItem,`,
-        `  DropdownMenuLabel,`,
-        `  DropdownMenuTrigger,`,
-        `} from "@/components/ui/dropdown-menu";`
-      );
-    }
-  
-    imports.push(`import { MyFormData } from "./types";`);
-  
-    const columnActions = config.edit || config.delete
+  if (config.edit || config.delete) {
+    imports.push(
+      `import { Button } from "@/components/ui/button";`,
+      `import { MoreHorizontal } from 'lucide-react';`,
+      `import {`,
+      `  DropdownMenu,`,
+      `  DropdownMenuContent,`,
+      `  DropdownMenuItem,`,
+      `  DropdownMenuLabel,`,
+      `  DropdownMenuTrigger,`,
+      `} from "@/components/ui/dropdown-menu";`
+    );
+  }
+
+  imports.push(`import { MyFormData } from "./types";`);
+
+  const columnActions =
+    config.edit || config.delete
       ? `
   interface ColumnActions {
-    ${config.edit ? `onEdit?: (data: MyFormData) => void;` : ''}
-    ${config.delete ? `onDelete?: (id: string) => void;` : ''}
+    ${config.edit ? `onEdit?: (data: MyFormData) => void;` : ""}
+    ${config.delete ? `onDelete?: (id: string) => void;` : ""}
   }`
-      : '';
-  
-    const createColumnsStart = `
+      : "";
+
+  const createColumnsStart = `
   export const createColumns = (): ColumnDef<MyFormData>[] => {
     const columns: ColumnDef<MyFormData>[] = [
       {
@@ -198,14 +234,19 @@ export function TableBuilder() {
         header: "Email",
       },
     ];`;
-  
-    const actionsColumn = config.edit || config.delete
+
+  const actionsColumn =
+    config.edit || config.delete
       ? `
     columns.push({
       id: "actions",
       cell: ({ row, table }) => {
         const record = row.original;
-        const { ${config.edit ? 'onEdit' : ''}${config.edit && config.delete ? ', ' : ''}${config.delete ? 'onDelete' : ''} } = table.options.meta as ColumnActions;
+        const { ${config.edit ? "onEdit" : ""}${
+          config.edit && config.delete ? ", " : ""
+        }${
+          config.delete ? "onDelete" : ""
+        } } = table.options.meta as ColumnActions;
   
         return (
           <DropdownMenu>
@@ -217,34 +258,41 @@ export function TableBuilder() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              ${config.edit ? `
-              <DropdownMenuItem onClick={() => onEdit(record)}>
+              ${
+                config.edit
+                  ? `
+              {onEdit && <DropdownMenuItem onClick={() => onEdit(record)}>
                 Edit
-              </DropdownMenuItem>` : ''}
-              ${config.delete ? `
-              <DropdownMenuItem onClick={() => onDelete(record.id)}>
+              </DropdownMenuItem>}`
+                  : ""
+              }
+              ${
+                config.delete
+                  ? `
+              {onDelete && <DropdownMenuItem onClick={() => onDelete(record.id)}>
                 Delete
-              </DropdownMenuItem>` : ''}
+              </DropdownMenuItem>}`
+                  : ""
+              }
             </DropdownMenuContent>
           </DropdownMenu>
         );
       },
     });`
-      : '';
-  
-    const createColumnsEnd = `
+      : "";
+
+  const createColumnsEnd = `
     return columns;
   };`;
-  
-    return [
-      ...imports,
-      columnActions,
-      createColumnsStart,
-      actionsColumn,
-      createColumnsEnd,
-    ].join('\n');
-  };
-  
+
+  return [
+    ...imports,
+    columnActions,
+    createColumnsStart,
+    actionsColumn,
+    createColumnsEnd,
+  ].join("\n");
+};
 
 export const generateDataTableCode = (config: TableConfig): string => {
   const imports = [
@@ -254,8 +302,13 @@ export const generateDataTableCode = (config: TableConfig): string => {
     `import {`,
     `  ColumnDef,`,
     `  flexRender,`,
+    `  ColumnFiltersState,`,
     `  getCoreRowModel,`,
+    `  getFilteredRowModel,`,
+    `  getPaginationRowModel,`,
     `  useReactTable,`,
+    `  SortingState,`,
+    `  getSortedRowModel,`,
     `} from "@tanstack/react-table";`,
     `import {`,
     `  Table,`,
@@ -272,7 +325,13 @@ export const generateDataTableCode = (config: TableConfig): string => {
     imports.push(`import { Input } from "@/components/ui/input";`);
   }
 
-  if (config.bulkDelete) {
+  if (config.sorting) {
+    imports.push(
+      `import { ArrowDownUp, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";`
+    );
+  }
+
+  if (config.multiDelete) {
     imports.push(`import { Checkbox } from "@/components/ui/checkbox";`);
   }
 
@@ -290,8 +349,8 @@ export const generateDataTableCode = (config: TableConfig): string => {
   }
   if (additionalImports.length > 0) {
     imports[3] = imports[3].replace(
-      '}',
-      `  ${additionalImports.join('\n  ')}\n}`
+      "}",
+      `  ${additionalImports.join("\n  ")}\n}`
     );
   }
 
@@ -302,32 +361,39 @@ export const generateDataTableCode = (config: TableConfig): string => {
   if (config.create) interfaceProps.push(`onAdd: () => void;`);
   if (config.edit) interfaceProps.push(`onEdit: (data: TData) => void;`);
   if (config.delete) interfaceProps.push(`onDelete: (id: string) => void;`);
-  if (config.bulkDelete) interfaceProps.push(`onBulkDelete: (data: TData[]) => void;`);
+  if (config.multiDelete)
+    interfaceProps.push(`onmultiDelete: (data: TData[]) => void;`);
 
   const dataTableInterface = `
 interface DataTableProps<TData, TValue> {
-  ${interfaceProps.join('\n  ')}
+  ${interfaceProps.join("\n  ")}
 }`;
 
   const dataTableStart = `
 export function DataTable<TData, TValue>({
   columns,
   data,
-  ${config.create ? 'onAdd,' : ''}
-  ${config.edit ? 'onEdit,' : ''}
-  ${config.delete ? 'onDelete,' : ''}
-  ${config.bulkDelete ? 'onBulkDelete,' : ''}
+  ${config.create ? "onAdd," : ""}
+  ${config.edit ? "onEdit," : ""}
+  ${config.delete ? "onDelete," : ""}
+  ${config.multiDelete ? "onmultiDelete," : ""}
 }: DataTableProps<TData, TValue>) {`;
 
   const stateDeclarations = [];
   if (config.sorting) {
-    stateDeclarations.push(`const [sorting, setSorting] = useState<SortingState>([]);`);
+    stateDeclarations.push(
+      `const [sorting, setSorting] = useState<SortingState>([]);`
+    );
   }
   if (config.search) {
-    stateDeclarations.push(`const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);`);
+    stateDeclarations.push(
+      `const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);`
+    );
   }
-  if (config.bulkDelete) {
-    stateDeclarations.push(`const [rowSelection, setRowSelection] = useState({});`);
+  if (config.multiDelete) {
+    stateDeclarations.push(
+      `const [rowSelection, setRowSelection] = useState({});`
+    );
   }
 
   const tableConfig = [
@@ -346,42 +412,42 @@ export function DataTable<TData, TValue>({
     tableConfig.push(`    onColumnFiltersChange: setColumnFilters,`);
     tableConfig.push(`    getFilteredRowModel: getFilteredRowModel(),`);
   }
-  if (config.bulkDelete) {
+  if (config.multiDelete) {
     tableConfig.push(`    onRowSelectionChange: setRowSelection,`);
   }
 
   const tableState = [];
   if (config.sorting) tableState.push(`sorting,`);
   if (config.search) tableState.push(`columnFilters,`);
-  if (config.bulkDelete) tableState.push(`rowSelection,`);
+  if (config.multiDelete) tableState.push(`rowSelection,`);
 
   if (tableState.length > 0) {
     tableConfig.push(`    state: {
-      ${tableState.join('\n      ')}
+      ${tableState.join("\n      ")}
     },`);
   }
 
   if (config.edit || config.delete) {
     tableConfig.push(`    meta: {
-      ${config.edit ? 'onEdit,' : ''}
-      ${config.delete ? 'onDelete,' : ''}
+      ${config.edit ? "onEdit," : ""}
+      ${config.delete ? "onDelete," : ""}
     },`);
   }
 
   const tableDeclaration = `
   const table = useReactTable({
-${tableConfig.join('\n')}
+${tableConfig.join("\n")}
   });`;
 
-  const bulkDeleteFunction = config.bulkDelete
+  const multiDeleteFunction = config.multiDelete
     ? `
-  const handleBulkDelete = () => {
+  const handlemultiDelete = () => {
     const selectedItems = table
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original as TData);
-    onBulkDelete(selectedItems);
+    onmultiDelete(selectedItems);
   };`
-    : '';
+    : "";
 
   const searchInput = config.search
     ? `
@@ -393,28 +459,30 @@ ${tableConfig.join('\n')}
           // }
           className="max-w-sm"
         />`
-    : '';
+    : "";
 
-  const bulkDeleteButton = config.bulkDelete
+  const multiDeleteButton = config.multiDelete
     ? `
           {Object.keys(rowSelection).length > 0 && (
-            <Button onClick={handleBulkDelete} variant="destructive">
+            <Button onClick={handlemultiDelete} variant="destructive">
               Delete Selected ({Object.keys(rowSelection).length})
             </Button>
           )}`
-    : '';
+    : "";
 
   const addButton = config.create
     ? `
           <Button onClick={onAdd}>Add Item</Button>`
-    : '';
+    : "";
 
   const tableHeader = `
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                ${config.bulkDelete ? `
+                ${
+                  config.multiDelete
+                    ? `
                 <TableHead className="w-[50px]">
                   <Checkbox
                     checked={table.getIsAllPageRowsSelected()}
@@ -423,15 +491,43 @@ ${tableConfig.join('\n')}
                     }
                     aria-label="Select all"
                   />
-                </TableHead>` : ''}
+                </TableHead>`
+                    : ""
+                }
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        :${
+                          config.sorting
+                            ? `<div className="flex items-center">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {header.column.getCanSort() && (
+                        <Button
+                          variant="ghost"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {header.column.getIsSorted() ? (
+                            header.column.getIsSorted() === "desc" ? (
+                              <ArrowDownWideNarrow className="ml-2 h-4 w-4" />
+                            ) : (
+                              <ArrowUpNarrowWide className="ml-2 h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowDownUp className="ml-2 h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                    </div>}
+                          `
+                            : ` flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}`
+                        }
                   </TableHead>
                 ))}
               </TableRow>
@@ -446,14 +542,18 @@ ${tableConfig.join('\n')}
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  ${config.bulkDelete ? `
+                  ${
+                    config.multiDelete
+                      ? `
                   <TableCell className="w-[50px]">
                     <Checkbox
                       checked={row.getIsSelected()}
                       onCheckedChange={(value) => row.toggleSelected(!!value)}
                       aria-label="Select row"
                     />
-                  </TableCell>` : ''}
+                  </TableCell>`
+                      : ""
+                  }
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -497,7 +597,7 @@ ${tableConfig.join('\n')}
           Next
         </Button>
       </div>`
-    : '';
+    : "";
 
   const componentReturn = `
   return (
@@ -505,7 +605,7 @@ ${tableConfig.join('\n')}
       <div className="flex items-center justify-between">
         ${searchInput}
         <div className="flex items-center gap-4">
-          ${bulkDeleteButton}
+          ${multiDeleteButton}
           ${addButton}
         </div>
       </div>
@@ -524,8 +624,7 @@ ${tableConfig.join('\n')}
     dataTableStart,
     ...stateDeclarations,
     tableDeclaration,
-    bulkDeleteFunction,
+    multiDeleteFunction,
     componentReturn,
-  ].join('\n');
+  ].join("\n");
 };
-

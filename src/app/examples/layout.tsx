@@ -2,8 +2,9 @@
 import { Suspense, ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import CodeBlocks from "@/components/examples/code-display";
+import ExampleOneCodeBlocks from "@/components/examples/example-1/code-display";
 import { Loader2 } from "lucide-react";
+import ExampleTwoCodeBlocks from "@/components/examples/example-2/code-display";
 
 // Loading component for Suspense fallback
 const ExampleLoading = () => <Loader2 size={16} className="animate-spin" />;
@@ -12,7 +13,22 @@ export default function ExamplesLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   // Sidebar links configuration
-  const examples = [{ label: "Example 1", href: "/examples" }];
+  const examples = [
+    {
+      label: "Example 1",
+      href: "/examples",
+      code: <ExampleOneCodeBlocks />,
+      description:
+        "This is an example page to demonstrate the layout of the examples page.",
+    },
+    {
+      label: "Example 2",
+      href: "/examples/example-2",
+      code: <ExampleTwoCodeBlocks />,
+      description:
+        "This is an example page to demonstrate the layout of the examples page.",
+    },
+  ];
 
   return (
     <div className="container mx-auto">
@@ -45,19 +61,21 @@ export default function ExamplesLayout({ children }: { children: ReactNode }) {
           <Suspense fallback={<ExampleLoading />}>
             <section>{children}</section>
           </Suspense>
-
-          <section>
-            <div>
-              <h1 className="text-3xl font-semibold">Example 1</h1>
-              <p className="mt-4">
-                This is an example page to demonstrate the layout of the
-                examples page.
-              </p>
-            </div>
-            <Suspense fallback={<ExampleLoading />}>
-              <CodeBlocks />
-            </Suspense>
-          </section>
+          {examples.map((example) => (
+            <section key={example.href}>
+              <div>
+                <h1 className="text-3xl font-semibold">
+                  {pathname === example.href && example.label}
+                </h1>
+                <p className="mt-4">
+                  {pathname === example.href && example.description}
+                </p>
+              </div>
+              <Suspense fallback={<ExampleLoading />}>
+                {pathname === example.href && example.code}
+              </Suspense>
+            </section>
+          ))}
         </main>
       </div>
     </div>

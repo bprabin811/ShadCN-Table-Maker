@@ -19,7 +19,7 @@ export default function Playground() {
     create: false,
     edit: false,
     delete: false,
-    bulkDelete: false,
+    multiDelete: false,
     search: true,
   });
 

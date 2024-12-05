@@ -73,7 +73,7 @@ export default function TableBuilder() {
     setData(data.filter((record) => record.id !== id));
   };
 
-  const handleBulkDelete = (users: MyFormData[]) => {
+  const handlemultiDelete = (users: MyFormData[]) => {
     const userIds = new Set(users.map((record) => record.id));
     setData(data.filter((record) => !userIds.has(record.id)));
   };
@@ -112,7 +112,7 @@ export default function TableBuilder() {
         onAdd={openCreateDialog}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onBulkDelete={handleBulkDelete}
+        onmultiDelete={handlemultiDelete}
       />
     </div>
   );

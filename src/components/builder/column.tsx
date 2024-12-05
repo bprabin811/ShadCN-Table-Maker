@@ -25,7 +25,7 @@ export interface TableConfig {
   create: boolean
   edit: boolean
   delete: boolean
-  bulkDelete: boolean
+  multiDelete: boolean
   search: boolean
 }
 

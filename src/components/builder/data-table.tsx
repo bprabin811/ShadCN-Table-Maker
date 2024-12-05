@@ -31,6 +31,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { ArrowDownUp, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -38,7 +39,7 @@ interface DataTableProps<TData, TValue> {
   onAdd: () => void;
   onEdit: (user: User) => void;
   onDelete: (id: string) => void;
-  onBulkDelete: (users: User[]) => void;
+  onmultiDelete: (users: User[]) => void;
   config: TableConfig;
 }
 
@@ -48,7 +49,7 @@ export function DataTable<TData, TValue>({
   onAdd,
   onEdit,
   onDelete,
-  onBulkDelete,
+  onmultiDelete,
   config,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -81,11 +82,11 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const handleBulkDelete = () => {
+  const handlemultiDelete = () => {
     const selectedUsers = table
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original as User);
-    onBulkDelete(selectedUsers);
+    onmultiDelete(selectedUsers);
   };
 
   return (
@@ -105,8 +106,8 @@ export function DataTable<TData, TValue>({
           />
         )}
         <div className="flex items-center gap-4">
-          {config.bulkDelete && Object.keys(rowSelection).length > 0 && (
-            <Button onClick={handleBulkDelete} variant="destructive">
+          {config.multiDelete && Object.keys(rowSelection).length > 0 && (
+            <Button onClick={handlemultiDelete} variant="destructive">
               Delete Selected ({Object.keys(rowSelection).length})
             </Button>
           )}
@@ -141,7 +142,7 @@ export function DataTable<TData, TValue>({
           <TableHeader className="bg-secondary">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {config.bulkDelete && (
+                {config.multiDelete && (
                   <TableHead className="w-[50px]">
                     <Checkbox
                       checked={table.getIsAllPageRowsSelected()}
@@ -153,15 +154,33 @@ export function DataTable<TData, TValue>({
                   </TableHead>
                 )}
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
+                <TableHead key={header.id}>
+                  {header.isPlaceholder ? null : (
+                    <div className="flex items-center">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {config.sorting && header.column.getCanSort() && (
+                        <Button
+                          variant="ghost"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {header.column.getIsSorted() ? (
+                            header.column.getIsSorted() === "desc" ? (
+                              <ArrowDownWideNarrow className="ml-2 h-4 w-4" />
+                            ) : (
+                              <ArrowUpNarrowWide className="ml-2 h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowDownUp className="ml-2 h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </TableHead>
+              ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -172,7 +191,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {config.bulkDelete && (
+                  {config.multiDelete && (
                     <TableCell className="w-[50px]">
                       <Checkbox
                         checked={row.getIsSelected()}

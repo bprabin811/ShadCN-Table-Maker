@@ -80,7 +80,7 @@ export function TableBuilder({ config }: TableBuilderProps) {
     setData(data.filter((user) => user.id !== id));
   };
 
-  const handleBulkDelete = (users: User[]) => {
+  const handlemultiDelete = (users: User[]) => {
     const userIds = new Set(users.map((user) => user.id));
     setData(data.filter((user) => !userIds.has(user.id)));
   };
@@ -124,7 +124,7 @@ export function TableBuilder({ config }: TableBuilderProps) {
         onAdd={openCreateDialog}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onBulkDelete={handleBulkDelete}
+        onmultiDelete={handlemultiDelete}
       />
     </div>
   );
